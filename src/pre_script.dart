@@ -29,7 +29,8 @@ void list(ArgResults globalResults, ArgResults commandResults) async {
 
       var chunks = extractChunksFromContents(contents, f);
 
-      // first match in a chunkis the tool that  it needs
+      // first match in a chunk is the tool that  it needs
+      //so this makes a list of tools that could be used for this script
       var tools = chunks.map((chunk) => chunk[1]).join(', ').toString();
 
       print("${f.shortPath(g.vaultPath)} : $tools");
@@ -48,7 +49,7 @@ void execute(ArgResults globalResults, ArgResults commandResults) {
 
       var contents = f.readAsStringSync();
 
-      await extractAndExecuteScriptChunk(contents, f);
+      await extractAndExecuteScriptChunk(contents, f, globalResults);
 
       g.log.finest("End: ${f.shortPath(g.vaultPath)}");
     }
@@ -65,45 +66,60 @@ void execute(ArgResults globalResults, ArgResults commandResults) {
 /// The code fences MUST be of the form "~~~".
 /// The variant using back tick instead of tilde is not accepted.
 ///
-Future<int> extractAndExecuteScriptChunk(String contents, File f) async {
-  var chunks = extractChunksFromContents(contents, f);
-
-  // the working directory is the parent of the place we found the script
+Future<int> extractAndExecuteScriptChunk(String contents, File f, ArgResults globalResults) async {
+  
+   // the working directory is the parent of the place we found the script
   var cwd = RegExp(g.scriptDirectory).firstMatch(f.path)[1];
+  
+  var executable = "";
+  var script = "";
+  var chunks = extractChunksFromContents(contents, f);
 
   // Match the requested executable from the list of chunks with the
   // executables specified as available on this system ...
-  // FIXME: for now though we just take the first alternative
-  var executable = chunks.first[1];
-  var script = chunks.first[2];
+  // If nothing was specified take the first chunk by default
+  for (var chunk in chunks) {
+    if (globalResults['tools'].isEmpty || globalResults['tools'].contains(chunk[1])) {
+      executable = chunk[1];
+      script = chunk[2];
+      break;
+    }
+  }
 
-  g.log.info("Running ${f.shortPath(g.vaultPath)} with executable: $executable");
+  if (executable == "") {
+    g.log.warning("Attempting ${f.shortPath(g.vaultPath)} but no matching tool found");
+    return 255;
 
-  // this starts the process and then returns, the only way
-  // we know it's finished is when we get the return code
-  return Process.start(
-    executable,
-    [],
-    workingDirectory: cwd,
-    includeParentEnvironment: true,
-  ).then((process) async {
-    g.log.fine("${f.shortPath(g.vaultPath)} starting with PID: ${process.pid}");
+  } else {
+    g.log.info("Running ${f.shortPath(g.vaultPath)} with tool: $executable");
 
-    //have to be sure to empty stdout & stderr so process can terminate
-    process.stdout.transform(utf8.decoder).listen((data) {
-      g.log.finest("pid:${process.pid}: stdout: $data");
+    // this starts the process and then returns, the only way
+    // we know it's finished is when we get the return code
+    return Process.start(
+      executable,
+      [],
+      workingDirectory: cwd,
+      includeParentEnvironment: true,
+      runInShell: true,
+    ).then((process) async {
+      g.log.fine("${f.shortPath(g.vaultPath)} starting with PID: ${process.pid}");
+
+      //have to be sure to empty stdout & stderr so process can terminate
+      process.stdout.transform(utf8.decoder).listen((data) {
+        g.log.finest("pid:${process.pid}: stdout: $data");
+      });
+      process.stderr.transform(utf8.decoder).listen((data) {
+        g.log.finest("pid:${process.pid}: stderr: $data");
+      });
+
+      // and feed it the commands from the script
+      process.stdin.writeln(script);
+      g.log.finest("pid:${process.pid}: stdin: $script");
+      process.stdin.close();
+
+      return process.exitCode;
     });
-    process.stderr.transform(utf8.decoder).listen((data) {
-      g.log.finest("pid:${process.pid}: stderr: $data");
-    });
-
-    // and feed it the commands from the script
-    process.stdin.writeln(script);
-    g.log.finest("pid:${process.pid}: stdin: $script");
-    process.stdin.close();
-
-    return process.exitCode;
-  });
+  }
 }
 
 ///
@@ -170,8 +186,10 @@ Future<List<FileSystemEntity>> locateAllScriptFilesInVault(ArgResults globalResu
           g.log.finest("inspectinging ${(n.value as File).shortPath(g.vaultPath)}");
         }
       })
-      // looking for *.s.md files in a "/.../scripts/" diewctory
+      // looking for *.s.md files in a "/.../scripts/" directory
       .where((e) => scriptDirectory.hasMatch(e.path))
+      // if a filter was specified (-f) then it has to match
+      .where((e) => globalResults['filter'] =="" || e.path.contains(globalResults['filter']))
       .doOnEach((n) {
         if (n.kind == Kind.OnData && n.value is File) {
           g.log.fine("Found ${(n.value as File).shortPath(g.vaultPath)}");

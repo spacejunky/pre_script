@@ -8,9 +8,9 @@ import '../src/cli.dart';
 void main(List<String> arguments) {
   _setupLogging();
 
-  parseCLI(["-i","-d","/home/nigelhead/obsidian/NigelPrivate", "list"]);
-  // parseCLI(["-i", "-d", "/home/nigelhead/obsidian/NigelPrivate", "run"]);
-  // parseCLI(["-d","/home/nigelhead/obsidian/NigelPrivate", "run"]);
+  // parseCLI(["-i","-d","/home/nigelhead/obsidian/NigelPrivate","-t","linux,python","list"]);
+  // parseCLI(["-i", "-d", "/home/nigelhead/obsidian/NigelPrivate","-t","python","-f","pdf","run"]);
+  parseCLI(["-v","-d","/home/nigelhead/obsidian/NigelPrivate","help"]);
   // parseCLI(arguments);
 }
 
