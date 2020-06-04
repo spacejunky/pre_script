@@ -14,7 +14,7 @@ It provides mechanisms for:
 + defining the scope of a Script execution (i.e. the whole Vault or only a specific part of the Vault)
 + running the scripts (or possibly a selected subset only)
 
-As the name implies the deisgn intention of pre-Script is that it be run *prior* to starting Obsidian (presumably in some kind of shell startup script). There are also reasons to run it *after* closing an Obsidian session (to do backups, for example) but that name was already taken!
+As the name implies the design intention of pre-Script is that it be run *prior* to starting Obsidian (presumably in some kind of shell startup script). There are also reasons to run it *after* closing an Obsidian session (to do backups, for example) but that name was already taken!
 
 In principle, you could also run it from a terminal session in parallel to Obsidian, but personally, I feel it might be better to avpid doing that, just in case.
 
@@ -35,7 +35,7 @@ To store Scripts in you Vault you should:
    The leading fence should be followed by a blank character and a tool specification which is needed to run this script segment.
    (See the [examples][https://github.com/spacejunky/pre_script/examples] directory on github to make this clearer) 
 
-4.In recognition of the multi-platform nature of Obsidian (currently Windws, Mac and linux) pre-Script allows any Script file to contain several equivalent implementations of the script functions and will select whichever is appropriate, based on matching which 'tools' it is told are available (via the -t x,y,z option) against the tool that each code-fenced section says it would need. First match wins.
+4. In recognition of the multi-platform nature of Obsidian (currently Windws, Mac and linux) pre-Script allows any Script file to contain several equivalent implementations of the script functions and will select whichever is appropriate, based on matching which 'tools' it is told are available (via the -t x,y,z option) against the tool that each code-fenced section says it would need. First match wins.
 
 And there you have it. You have created your first pre_Script script.
 
