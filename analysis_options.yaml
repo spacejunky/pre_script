@@ -1,0 +1,12 @@
+include: package:effective_dart/analysis_options.yaml
+
+
+analyzer:
+#   exclude:
+#     - path/to/excluded/files/**
+
+linter:
+  rules:
+    lines_longer_than_80_chars: false
+    public_member_api_docs: false
+    avoid_relative_lib_imports: false 
