@@ -1,20 +1,18 @@
-# README for pre-Script
+# README for pre_Script
 
-This is a *proof of concept* release an an Obsidian Support tool calles Pre-Script.  
+This is a *proof of concept* release an an Obsidian Support tool calles pre_Script.  
 Here, proof of concept means that I publish it to gather feedback on whether people find the idea useful at all, how the approach I have taken could be improved and so on.
 
 It also means that the coding of this is more of the "quick hack" sort than the "professional product" sort. If this turns out to be something the community appreciates then I will do my best to make a proper project of it. Hopefully others may wish to help. 
 
-## What is pre-Script?
+## What is pre_Script?
 
-pre-Script supports users of [Obsidian](https://obsidian.md/) with script-based maintenance of their Vault.
+pre_Script supports users of [Obsidian](https://obsidian.md/) with script-based maintenance of their Vault.
 
 It provides mechanisms for:
 + storing Scripts in the Vault in an organized way
 + defining the scope of a Script execution (i.e. the whole Vault or only a specific part of the Vault)
 + running the scripts (or possibly a selected subset only)
-
-In recognition of the multi-platform nature of Obsidian (currently Windws, Mac and linux) pre-Script allows any Script file to contain several equivalent implementations of the script functions and will select whichever is appropriate, based on matching which 'tools' it is told are available (e.g. windows, linux or Mac shells, python, dart, awk(!), ...) against the tool that each code-fenced section says it would need. First match wins.
 
 As the name implies the deisgn intention of pre-Script is that it be run *prior* to starting Obsidian (presumably in some kind of shell startup script). There are also reasons to run it *after* closing an Obsidian session (to do backups, for example) but that name was already taken!
 
@@ -27,17 +25,23 @@ As you probably know, your Obsidian Vault is nothing other than a tree of direct
 To store Scripts in you Vault you should:
 
 1. create a sub-directory called "scripts" where you will store the Scripts
+
 2. place each Script in a file in that directory, naming them with the extension ".s.md"
    + In other words, Scripts are just Markdown files, and both the "scripts" directory, and the Script files will be visible in Obsidian
+
 3. The Script file itself may contain arbitrary markdown (I assume this will be used to document the script). 
-   Within this markdown you will place 'code fenced' sections of text containg the executable statements for the script. 
+   Within this markdown you will place a 'code fenced' section of text containg the executable statements for the script. 
    The code fence to be used is the common "~~~", the less comonn variant using back-ticks will not be recognised.
-   The leading fence should be followed by a blank character and a tool specification which is needed to run this particular segment.
-   (See the [examples][https://github.com/spacejunky/pre-script/examples] directory on github to make this clearer) 
+   The leading fence should be followed by a blank character and a tool specification which is needed to run this script segment.
+   (See the [examples][https://github.com/spacejunky/pre_script/examples] directory on github to make this clearer) 
 
-And there you have it. You have created your first pre-Script script.
+4.In recognition of the multi-platform nature of Obsidian (currently Windws, Mac and linux) pre-Script allows any Script file to contain several equivalent implementations of the script functions and will select whichever is appropriate, based on matching which 'tools' it is told are available (via the -t x,y,z option) against the tool that each code-fenced section says it would need. First match wins.
 
-To help tighten the scope of action of the Scripts pre-Script will set the current working directory for the script execution to the directory which contained the "scripts" directory. By convention, scripts should follow the principle of only working on Notes conatined in that current directory, or in sub-directories of it. pre-Script makes no attempt to enforce that (after all it's your Vault, and you can do what you want with it), but it seems like a convention is helpful and useful.
+And there you have it. You have created your first pre_Script script.
+
+To help tighten the scope of action of the Scripts pre_Script will set the current working directory for the script execution to the directory which contained the "scripts" directory. By convention, scripts should follow the principle of only working on Notes conatined in that current directory, or in sub-directories of it. pre-Script makes no attempt to enforce that (after all it's your Vault, and you can do what you want with it), but it seems like a convention that is helpful and useful.
+
+Based on this convention pre_Script makes sure it excutes the scripts whhich are deepest in the Vault tree first, so their results may safely be refernced later, from scriots higher up the tree.
 
 To give a conccrete example, assume you have a special directory where you keep your Day Notes (say, "myVault/Daily") and that you wish to write a script to prodcue some sort of summary of those Day Notes.
 
@@ -47,9 +51,17 @@ To give a conccrete example, assume you have a special directory where you keep 
 
 When pre-Script is told to execute SummariseDayNotes it will set the working directory to "myVault/Daily" so that any new Notes naively created by the script will appear next to the Day Notes they are summarising. 
 
-When it comes time to run 
+## Script input & output
 
-## Things to script
+The Script text is fed to which ever tool gets matched via the standard input.
+
+Unless the script redirects them, stdout & stderr are thrown away. If you really need to see them (perhaps to debug a script) give the "-V" option (be very verbose) on the command line.
+
+## Commandline flags & parameters
+
+pre_script will give help information with the "help" command.
+
+## Ideas for things to script
 
 There are many useful functions which could be supported by scripting, for example:
 
