@@ -10,7 +10,7 @@ void main(List<String> arguments) {
 
   // parseCLI(["-i","-d","/home/nigelhead/obsidian/NigelPrivate","-t","linux,python","list"]);
   // parseCLI(["-i", "-d", "/home/nigelhead/obsidian/NigelPrivate","-t","python","-f","pdf","run"]);
-  parseCLI(["-v","-d","/home/nigelhead/obsidian/NigelPrivate","help"]);
+  parseCLI(["-V", "-d", "/home/nigelhead/obsidian/NigelPrivate", "-f", "Daily","-t","python","-t","nix","run"]);
   // parseCLI(arguments);
 }
 

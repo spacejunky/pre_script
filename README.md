@@ -35,7 +35,7 @@ To store Scripts in you Vault you should:
    The leading fence should be followed by a blank character and a tool specification which is needed to run this script segment.
    (See the [examples][https://github.com/spacejunky/pre_script/examples] directory on github to make this clearer) 
 
-4. In recognition of the multi-platform nature of Obsidian (currently Windws, Mac and linux) pre-Script allows any Script file to contain several equivalent implementations of the script functions and will select whichever is appropriate, based on matching which 'tools' it is told are available (via the -t x,y,z option) against the tool that each code-fenced section says it would need. First match wins.
+4. In recognition of the multi-platform nature of Obsidian (currently Windws, Mac and linux) pre-Script allows any Script file to contain several equivalent implementations  of the script functions and will select whichever is appropriate, based on matching which 'tools' it is told are available (via the -t x,y,z option) against the tool that each code-fenced section says it would need. First match wins.
 
 And there you have it. You have created your first pre_Script script.
 
